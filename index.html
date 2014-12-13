@@ -13,13 +13,16 @@
         var currentAnimation = "STILL";
         var scene, camera, renderer, animation, helper;
         var clock = new THREE.Clock();
-
+        var animationInProgress;
+        var animationEndingRequest = false;
         init();
         animate();
 
          // Sets up the scene.
         function init() {
-            window.addEventListener("keydown", function (e) {
+            window.addEventListener("keydown", function (e) { 
+                if(animationInProgress) {return;}
+                
                 if (e.keyCode === 38) { //up arrow 
                     currentAnimation = "WALKING";
                 } else if (e.keyCode === 69) { //E
@@ -34,7 +37,10 @@
 
             });
             window.addEventListener("keyup", function (e) {
-                currentAnimation = "STILL";
+                animationEndingRequest = true;
+                if(!animationInProgress) {
+                    
+                }
             });
 
             // Create the scene and set the scene size.
@@ -121,18 +127,22 @@
             // Render the scene.
             //controls.update();
             if (animation) {
-                if (currentAnimation == "STILL") {
-                    if (animation.currentTime < 2 || animation.currentTime >= 2.9) {
-                        animation.stop();
-                        animation.play(2);
-                    }
-                } else if (currentAnimation == "WALKING") {
+                if(!animationInProgress && animationEndingRequest) {
+                    currentAnimation = "STILL";
+                    animationEndingRequest = false;
+                }
+                if (currentAnimation == "WALKING") {
                     if (animation.currentTime > 1) {
                         animation.stop();
                         animation.play(0);
                     }
                 } else if (currentAnimation == "PUNCHLEFT") {
-                    if (animation.currentTime > 3.5 || animation.currentTime < 3) {
+                    if(animationInProgress && animation.currentTime >= 3.5 && animation.isPlaying) {
+                        animationInProgress = false;
+                        currentAnimation = "STILL";
+                    }
+                     else if (animation.currentTime > 3.5 || animation.currentTime < 3) {
+                        animationInProgress = true;
                         animation.stop();
                         animation.play(3);
                     }
@@ -141,15 +151,20 @@
                         animation.stop();
                         animation.play(3.5);
                     }
-                } else if (currentAnimation == "DODGELEFT") {
+                } else if (currentAnimation == "DODGERIGHT") {
                     if (animation.currentTime > 1.5 || animation.currentTime < 1) {
                         animation.stop();
                         animation.play(1);
                     }
-                } else if (currentAnimation == "DODGERIGHT") {
+                } else if (currentAnimation == "DODGELEFT") {
                     if (animation.currentTime > 2 || animation.currentTime < 1.5) {
                         animation.stop();
                         animation.play(1.5);
+                    }
+                } else {
+                    if (animation.currentTime < 2 || animation.currentTime >= 2.9) {
+                        animation.stop();
+                        animation.play(2);
                     }
                 }
             }
