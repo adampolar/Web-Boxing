@@ -122,8 +122,8 @@
             //controls.update();
             if (animation) {
                 if (currentAnimation == "STILL") {
-                    if (animation.currentTime < 2 || animation.currentTime > 3) {
-                        animation.stop()
+                    if (animation.currentTime < 2 || animation.currentTime >= 2.9) {
+                        animation.stop();
                         animation.play(2);
                     }
                 } else if (currentAnimation == "WALKING") {
