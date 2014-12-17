@@ -93,9 +93,17 @@
                 scene.add(helper);
                 animation = new THREE.Animation(mesh, geometry.animations[0])
             });
+            loader.load("model/ring.json", function(geometry) {
+                var material = new THREE.MeshNormalMaterial({
+                    color: 0x55B663
+                });
+                mesh = new THREE.SkinnedMesh(geometry, material);
+                mesh.position.set(0,-26,0);
+                scene.add(mesh);
+            });
 
             // Add OrbitControls so that we can pan around with the mouse.
-            //controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
             camera.lookAt(new THREE.Vector3(0, -10, 0));
 
         }
@@ -125,7 +133,7 @@
             requestAnimationFrame(animate);
 
             // Render the scene.
-            //controls.update();
+            controls.update();
             if (animation) {
                 if(!animationInProgress && animationEndingRequest) {
                     currentAnimation = "STILL";
